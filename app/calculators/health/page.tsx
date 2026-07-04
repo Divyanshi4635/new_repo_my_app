@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { MascotBubble } from "@/components/Mascot";
 import { NumberField } from "@/components/calc/NumberField";
 import { ResultCard, TabBar } from "@/components/calc/ResultCard";
 import { getTheme } from "@/lib/theme";
+import { useStreak } from "@/components/StreakProvider";
 
 const theme = getTheme("health");
 
@@ -173,7 +174,15 @@ function EnergyTab() {
 }
 
 export default function BodyHealth() {
+  const { bump } = useStreak();
   const [tab, setTab] = useState("bmi");
+  const bumpedRef = useRef(false);
+
+  useEffect(() => {
+    if (bumpedRef.current) return;
+    bumpedRef.current = true;
+    bump();
+  }, [bump]);
 
   const mascotMsg =
     tab === "bmi"

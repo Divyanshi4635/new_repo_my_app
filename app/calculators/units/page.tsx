@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { MascotBubble } from "@/components/Mascot";
 import { NumberField } from "@/components/calc/NumberField";
 import { ResultCard, TabBar } from "@/components/calc/ResultCard";
 import { getTheme } from "@/lib/theme";
+import { useStreak } from "@/components/StreakProvider";
 
 const theme = getTheme("units");
 
@@ -68,11 +69,19 @@ function fromCelsius(value: number, unit: string): number {
 }
 
 export default function UnitNinja() {
+  const { bump } = useStreak();
   const [category, setCategory] = useState<Category>("length");
   const units = UNITS[category];
   const [fromUnit, setFromUnit] = useState(units[0].key);
   const [toUnit, setToUnit] = useState(units[1]?.key ?? units[0].key);
   const [amount, setAmount] = useState("1");
+  const bumpedRef = useRef(false);
+
+  useEffect(() => {
+    if (bumpedRef.current) return;
+    bumpedRef.current = true;
+    bump();
+  }, [bump]);
 
   function switchCategory(next: Category) {
     setCategory(next);

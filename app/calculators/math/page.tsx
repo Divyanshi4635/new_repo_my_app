@@ -7,8 +7,11 @@ import { CalcScreen } from "@/components/calc/CalcScreen";
 import { CalcKey } from "@/components/calc/CalcKey";
 import { getTheme } from "@/lib/theme";
 import { useSound } from "@/components/SoundProvider";
+import { useStreak } from "@/components/StreakProvider";
 import { playTap, playSuccess, playOops } from "@/lib/sound";
 import { fireConfetti } from "@/lib/confetti";
+import { logCalculation } from "@/lib/db/actions";
+import { HistoryPanel } from "@/components/calc/HistoryPanel";
 
 const theme = getTheme("math");
 
@@ -45,6 +48,7 @@ function operate(a: number, b: number, op: string): number {
 
 export default function MathBlaster() {
   const { enabled } = useSound();
+  const { bump } = useStreak();
   const [display, setDisplay] = useState("0");
   const [prev, setPrev] = useState<number | null>(null);
   const [operator, setOperator] = useState<string | null>(null);
@@ -52,6 +56,7 @@ export default function MathBlaster() {
   const [expression, setExpression] = useState("");
   const [mascotMsg, setMascotMsg] = useState("Type a sum and I'll cheer you on! 🎉");
   const [mood, setMood] = useState<"happy" | "excited" | "thinking">("happy");
+  const [historyTick, setHistoryTick] = useState(0);
 
   const beep = () => enabled && playTap();
 
@@ -149,6 +154,11 @@ export default function MathBlaster() {
 
     const fact = FUN_FACTS[resultStr];
     setMascotMsg(fact ?? CHEERS[Math.floor(Math.random() * CHEERS.length)]);
+
+    bump();
+    logCalculation("math", finalExpression.replace(/ =$/, ""), resultStr).then(() =>
+      setHistoryTick((t) => t + 1)
+    );
   }
 
   return (
@@ -213,6 +223,8 @@ export default function MathBlaster() {
             />
           </div>
         </div>
+
+        <HistoryPanel calculator="math" refreshKey={historyTick} theme={theme} />
       </div>
     </PageShell>
   );

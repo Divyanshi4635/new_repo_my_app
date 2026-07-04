@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { MascotBubble } from "@/components/Mascot";
 import { NumberField } from "@/components/calc/NumberField";
 import { ResultCard, TabBar } from "@/components/calc/ResultCard";
 import { getTheme } from "@/lib/theme";
 import { useSound } from "@/components/SoundProvider";
+import { useStreak } from "@/components/StreakProvider";
 import { playSuccess } from "@/lib/sound";
 import { fireBigConfetti } from "@/lib/confetti";
 
@@ -101,8 +102,16 @@ function CountdownTab() {
 
 export default function PartyPlanner() {
   const { enabled } = useSound();
+  const { bump } = useStreak();
   const [tab, setTab] = useState("pizza");
   const [celebrated, setCelebrated] = useState(false);
+  const bumpedRef = useRef(false);
+
+  useEffect(() => {
+    if (bumpedRef.current) return;
+    bumpedRef.current = true;
+    bump();
+  }, [bump]);
 
   function handleTabChange(next: string) {
     setTab(next);

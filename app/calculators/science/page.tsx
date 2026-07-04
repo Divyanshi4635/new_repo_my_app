@@ -7,8 +7,11 @@ import { CalcScreen } from "@/components/calc/CalcScreen";
 import { CalcKey } from "@/components/calc/CalcKey";
 import { getTheme } from "@/lib/theme";
 import { useSound } from "@/components/SoundProvider";
+import { useStreak } from "@/components/StreakProvider";
 import { playTap, playSuccess, playOops } from "@/lib/sound";
 import { fireConfetti } from "@/lib/confetti";
+import { logCalculation } from "@/lib/db/actions";
+import { HistoryPanel } from "@/components/calc/HistoryPanel";
 
 const theme = getTheme("science");
 
@@ -38,6 +41,8 @@ function operate(a: number, b: number, op: string): number {
 
 export default function ScienceLab() {
   const { enabled } = useSound();
+  const { bump } = useStreak();
+  const [historyTick, setHistoryTick] = useState(0);
   const [display, setDisplay] = useState("0");
   const [prev, setPrev] = useState<number | null>(null);
   const [operator, setOperator] = useState<string | null>(null);
@@ -140,7 +145,8 @@ export default function ScienceLab() {
       return;
     }
 
-    setDisplay(String(Math.round(result * 1e10) / 1e10));
+    const resultStr = String(Math.round(result * 1e10) / 1e10);
+    setDisplay(resultStr);
     setExpression(finalExpression);
     setPrev(null);
     setOperator(null);
@@ -149,6 +155,11 @@ export default function ScienceLab() {
     if (enabled) playSuccess();
     fireConfetti(["#34d399", "#2dd4bf", "#22d3ee"]);
     setMascotMsg(REACTIONS[Math.floor(Math.random() * REACTIONS.length)]);
+
+    bump();
+    logCalculation("science", finalExpression.replace(/ =$/, ""), resultStr).then(() =>
+      setHistoryTick((t) => t + 1)
+    );
   }
 
   return (
@@ -300,6 +311,8 @@ export default function ScienceLab() {
             />
           </div>
         </div>
+
+        <HistoryPanel calculator="science" refreshKey={historyTick} theme={theme} />
       </div>
     </PageShell>
   );

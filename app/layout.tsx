@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
 import "./globals.css";
 import { SoundProvider } from "@/components/SoundProvider";
+import { StreakProvider } from "@/components/StreakProvider";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -32,7 +33,9 @@ export default function RootLayout({
       className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-carnival text-slate-800">
-        <SoundProvider>{children}</SoundProvider>
+        <SoundProvider>
+          <StreakProvider>{children}</StreakProvider>
+        </SoundProvider>
       </body>
     </html>
   );

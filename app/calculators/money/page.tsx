@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { MascotBubble } from "@/components/Mascot";
 import { NumberField } from "@/components/calc/NumberField";
 import { ResultCard, TabBar } from "@/components/calc/ResultCard";
 import { getTheme } from "@/lib/theme";
 import { useSound } from "@/components/SoundProvider";
+import { useStreak } from "@/components/StreakProvider";
 import { playSuccess } from "@/lib/sound";
 import { fireConfetti } from "@/lib/confetti";
 
@@ -136,8 +137,16 @@ function InterestTab() {
 
 export default function MoneyMachine() {
   const { enabled } = useSound();
+  const { bump } = useStreak();
   const [tab, setTab] = useState("goal");
   const [celebrated, setCelebrated] = useState(false);
+  const bumpedRef = useRef(false);
+
+  useEffect(() => {
+    if (bumpedRef.current) return;
+    bumpedRef.current = true;
+    bump();
+  }, [bump]);
 
   const mascotMsg = useMemo(() => {
     if (tab === "goal") return "Every coin counts toward your dream! Let's plan it. 🐷";

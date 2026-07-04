@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { MascotBubble } from "@/components/Mascot";
 import { NumberField } from "@/components/calc/NumberField";
 import { ResultCard, TabBar } from "@/components/calc/ResultCard";
 import { getTheme } from "@/lib/theme";
+import { useStreak } from "@/components/StreakProvider";
 
 const theme = getTheme("shapes");
 const fmt = (n: number) => (Number.isFinite(n) ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—");
@@ -114,8 +115,16 @@ function ShapeForm({ shape }: { shape: ShapeKey }) {
 }
 
 export default function ShapeShifter() {
+  const { bump } = useStreak();
   const [mode, setMode] = useState<"2d" | "3d">("2d");
   const [shape, setShape] = useState<ShapeKey>("circle");
+  const bumpedRef = useRef(false);
+
+  useEffect(() => {
+    if (bumpedRef.current) return;
+    bumpedRef.current = true;
+    bump();
+  }, [bump]);
 
   const shapes = mode === "2d" ? SHAPES_2D : SHAPES_3D;
 

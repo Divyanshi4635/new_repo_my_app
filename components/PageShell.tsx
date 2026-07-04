@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalcTheme } from "@/lib/theme";
 import { SoundToggleButton } from "@/components/SoundToggleButton";
+import { StreakBadge } from "@/components/StreakBadge";
 
 export function PageShell({
   theme,
@@ -23,8 +24,8 @@ export function PageShell({
             <span aria-hidden>🏠</span> Home
           </Link>
           <motion.h1
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: -8 }}
+            animate={{ y: 0 }}
             className="font-heading text-2xl text-white drop-shadow sm:text-3xl"
           >
             <span aria-hidden className="mr-2">
@@ -32,7 +33,10 @@ export function PageShell({
             </span>
             {theme.name}
           </motion.h1>
-          <SoundToggleButton />
+          <div className="flex items-center gap-3">
+            <StreakBadge />
+            <SoundToggleButton />
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-5 py-8">{children}</main>

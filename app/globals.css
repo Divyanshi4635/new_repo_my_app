@@ -48,6 +48,25 @@ h1, h2, h3, h4, .font-heading {
   animation: wiggle 1.8s ease-in-out infinite;
 }
 
+@keyframes badge-pop {
+  0% { opacity: 0; transform: translateY(-6px) scale(0.9); }
+  10% { opacity: 1; transform: translateY(0) scale(1); }
+  85% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-6px) scale(0.95); }
+}
+
+.animate-badge-pop {
+  animation: badge-pop 5s ease-in-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-wiggle,
+  .animate-badge-pop {
+    animation: none;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 12px;
 }
