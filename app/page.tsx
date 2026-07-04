@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { THEMES } from "@/lib/theme";
 import { CalculatorCard } from "@/components/CalculatorCard";
 import { Mascot } from "@/components/Mascot";
@@ -43,8 +44,11 @@ export default function Home() {
           ))}
         </div>
 
-        <footer className="mt-16 text-center text-sm text-slate-500">
-          Made with 💛 for curious minds of every age.
+        <footer className="mt-16 flex flex-col items-center gap-2 text-center text-sm text-slate-500">
+          <p>Made with 💛 for curious minds of every age.</p>
+          <Link href="/roadmap" className="underline decoration-dotted underline-offset-4 hover:text-slate-700">
+            🗺️ See what we&apos;re building next
+          </Link>
         </footer>
       </div>
     </div>
